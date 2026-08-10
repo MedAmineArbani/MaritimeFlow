@@ -1,0 +1,28 @@
+# Coordonnées géographiques des zones d'intérêt
+# Golfe du Mexique + ports marocains (Jorf Lasfar, Casablanca, Safi)
+
+gulf_of_mexico:
+  name: "Golfe du Mexique"
+  min_lat: 18.0
+  max_lat: 30.5
+  min_lon: -98.0
+  max_lon: -80.0
+
+ports_morocco:
+  jorf_lasfar:
+    name: "Jorf Lasfar"
+    lat: 33.116
+    lon: -8.633
+    radius_nm: 5
+
+  casablanca:
+    name: "Casablanca"
+    lat: 33.606
+    lon: -7.620
+    radius_nm: 5
+
+  safi:
+    name: "Safi"
+    lat: 32.310
+    lon: -9.240
+    radius_nm: 5
