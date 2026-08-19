@@ -76,7 +76,6 @@ def build_od_matrix(trajectories: pd.DataFrame, ports: pd.DataFrame) -> pd.DataF
 
     return pd.DataFrame(records)
 
-
 if __name__ == "__main__":
     from pathlib import Path
 
@@ -91,8 +90,12 @@ if __name__ == "__main__":
 
     od_matrix = build_od_matrix(trajectories, ports)
 
+    # AJOUT : rattache les caractéristiques du navire (Length, Width, Draft)
+    vessel_info = pd.read_csv(interim_dir / "vessel_info.csv")
+    od_matrix = od_matrix.merge(vessel_info, on="MMSI", how="left")
+
     print("Nombre de trajets O-D valides :", len(od_matrix))
     print("\nTrajets avec origine != destination :")
-    print(od_matrix[od_matrix["origin_port"] != od_matrix["destination_port"]].to_string())
 
     od_matrix.to_csv(processed_dir / "od_matrix.csv", index=False)
+    print("Trajets inter-ports :", len(od_matrix[od_matrix["origin_port"] != od_matrix["destination_port"]]))

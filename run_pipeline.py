@@ -12,7 +12,7 @@ ROOT = Path(__file__).parent
 
 PIPELINE_STEPS = [
     #("src/ingestion", "download_noaa.py"),
-    #("src/ingestion", "clean_ais.py"),
+    ("src/ingestion", "clean_ais.py"),
     ("src/ingestion", "build_trajectories.py"),
     ("src/ingestion", "resample_trajectories.py"),
     ("src/ports", "detect_stay_points.py"),
@@ -25,20 +25,16 @@ PIPELINE_STEPS = [
 def run_step(folder: str, script: str):
     path = ROOT / folder
     print(f"\n{'='*60}")
-    print(f"▶ {folder}/{script}")
+    print(f"> {folder}/{script}")
     print(f"{'='*60}")
 
     result = subprocess.run(
-        [sys.executable, script],
+        [sys.executable, "-u", script],
         cwd=path,
-        capture_output=True,
-        text=True,
     )
 
-    print(result.stdout)
     if result.returncode != 0:
-        print(f"ERREUR dans {script} :")
-        print(result.stderr)
+        print(f"ERREUR dans {script} (code {result.returncode})")
         sys.exit(1)
 
 

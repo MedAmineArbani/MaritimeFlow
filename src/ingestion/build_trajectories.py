@@ -16,7 +16,8 @@ def load_all_cleaned(folder: str) -> pd.DataFrame:
     files = glob.glob(os.path.join(folder, "*_clean.csv"))
     dfs = [pd.read_csv(f, low_memory=False) for f in files]
     df = pd.concat(dfs, ignore_index=True)
-    df["BaseDateTime"] = pd.to_datetime(df["BaseDateTime"])
+    df["BaseDateTime"] = pd.to_datetime(df["BaseDateTime"], errors="coerce")
+    df = df.dropna(subset=["BaseDateTime"])
     return df
 
 
@@ -35,6 +36,13 @@ def segment_trajectories(df: pd.DataFrame) -> pd.DataFrame:
 
     return df.drop(columns=["time_gap", "new_trajectory"])
 
+def extract_vessel_info(df: pd.DataFrame) -> pd.DataFrame:
+    """Extrait, par MMSI, les caractéristiques fixes du navire (proxy DWT)."""
+    return (
+        df.groupby("MMSI")[["Length", "Width", "Draft"]]
+        .median()  # médiane : robuste aux valeurs aberrantes ponctuelles
+        .reset_index()
+    )
 
 if __name__ == "__main__":
     folder = "../../data/interim/"
@@ -49,6 +57,9 @@ if __name__ == "__main__":
 
     # les fichiers _clean.csv individuels ne sont plus utiles
     # une fois regroupés dans trajectories.csv -> on les supprime pour gagner de la place
+    vessel_info = extract_vessel_info(df)
+    vessel_info.to_csv(os.path.join(folder, "vessel_info.csv"), index=False)
+    print("Table vessel_info.csv sauvegardée :", len(vessel_info), "navires")
     for f in glob.glob(os.path.join(folder, "*_clean.csv")):
         os.remove(f)
 
