@@ -76,8 +76,8 @@ def download_and_extract(day: date):
 if __name__ == "__main__":
     OUTPUT_FOLDER.mkdir(parents=True, exist_ok=True)
 
-    start_date = date(2024, 10, 18)
-    end_date = date(2024, 12, 23)
+    start_date = date(2024, 7, 1)
+    end_date = date(2024, 12, 31)
 
     for day in daterange(start_date, end_date):
         download_and_extract(day)
