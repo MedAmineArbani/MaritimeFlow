@@ -11,14 +11,14 @@ from pathlib import Path
 ROOT = Path(__file__).parent
 
 PIPELINE_STEPS = [
-    #("src/ingestion", "download_noaa.py"),
+    ("src/ingestion", "download_noaa.py"),
     ("src/ingestion", "clean_ais.py"),
     ("src/ingestion", "build_trajectories.py"),
     ("src/ingestion", "resample_trajectories.py"),
     ("src/ports", "detect_stay_points.py"),
-    ("src/ports", "cluster_ports_dbscan.py"),
-    ("src/ports", "validate_ports.py"),
-    ("src/network", "od_matrix.py"),
+    #("src/ports", "cluster_ports_dbscan.py"),
+    #("src/ports", "validate_ports.py"),
+    #("src/network", "od_matrix.py"),
 ]
 
 
