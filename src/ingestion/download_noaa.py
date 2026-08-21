@@ -74,10 +74,16 @@ def download_and_extract(day: date):
 
 
 if __name__ == "__main__":
-    OUTPUT_FOLDER.mkdir(parents=True, exist_ok=True)
+    import argparse
+    parser = argparse.ArgumentParser(description="Télécharge les données AIS NOAA pour une période donnée.")
+    parser.add_argument("--start", type=str, required=True, help="Date de début (YYYY-MM-DD)")
+    parser.add_argument("--end", type=str, required=True, help="Date de fin (YYYY-MM-DD)")
+    args = parser.parse_args()
 
-    start_date = date(2024, 7, 1)
-    end_date = date(2024, 12, 31)
+    OUTPUT_FOLDER.mkdir(parents=True, exist_ok=True)
+    
+    start_date = date.fromisoformat(args.start)
+    end_date = date.fromisoformat(args.end)
 
     for day in daterange(start_date, end_date):
         download_and_extract(day)
