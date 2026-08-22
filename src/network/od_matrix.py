@@ -83,19 +83,44 @@ if __name__ == "__main__":
     interim_dir = PROJECT_ROOT / "data" / "interim"
     processed_dir = PROJECT_ROOT / "data" / "processed"
 
-    trajectories = pd.read_csv(interim_dir / "trajectories_resampled.csv", low_memory=False)
+    traj_files = [
+        "trajectories_resampled_janv_fev_2023.csv",
+        "trajectories_resampled_mars_avril_2023.csv",
+        "trajectories_resampled_mai_juin_2023.csv",
+        "trajectories_resampled_juil_aout.csv",
+        "trajectories_resampled_sept_oct.csv",
+        "trajectories_resampled_nov_dec.csv",
+    ]
+
+    traj_dfs = []
+    for f in traj_files:
+        d = pd.read_csv(interim_dir / f, low_memory=False)
+        lot_name = f.replace("trajectories_resampled_", "").replace(".csv", "")
+        d["trajectory_id"] = d["trajectory_id"] + "_" + lot_name  # rend l'ID unique par lot
+        traj_dfs.append(d)
+
+    trajectories = pd.concat(traj_dfs, ignore_index=True)
     trajectories["BaseDateTime"] = pd.to_datetime(trajectories["BaseDateTime"])
+
+    # fusion des 6 lots de vessel_info
+    vessel_files = [
+        "vessel_info_janv_fev_2023.csv",
+        "vessel_info_mars_avril_2023.csv",
+        "vessel_info_mai_juin_2023.csv",
+        "vessel_info_juil_aout.csv",
+        "vessel_info_sept_oct.csv",
+        "vessel_info_nov_dec.csv",
+    ]
+    vessel_info = pd.concat(
+        [pd.read_csv(interim_dir / f) for f in vessel_files],
+        ignore_index=True
+    ).drop_duplicates(subset="MMSI")
 
     ports = pd.read_csv(processed_dir / "ports_validated.csv")
 
     od_matrix = build_od_matrix(trajectories, ports)
-
-    # AJOUT : rattache les caractéristiques du navire (Length, Width, Draft)
-    vessel_info = pd.read_csv(interim_dir / "vessel_info.csv")
     od_matrix = od_matrix.merge(vessel_info, on="MMSI", how="left")
 
     print("Nombre de trajets O-D valides :", len(od_matrix))
-    print("\nTrajets avec origine != destination :")
-
     od_matrix.to_csv(processed_dir / "od_matrix.csv", index=False)
     print("Trajets inter-ports :", len(od_matrix[od_matrix["origin_port"] != od_matrix["destination_port"]]))

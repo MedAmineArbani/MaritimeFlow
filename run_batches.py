@@ -13,9 +13,9 @@ ROOT = Path(__file__).parent
 DATA_INTERIM = ROOT / "data" / "interim"
 
 LOTS = [
-    {"name": "juil_aout",  "start": "2024-07-01", "end": "2024-08-31", "skip_download": True},
-    {"name": "sept_oct",   "start": "2024-09-01", "end": "2024-10-31", "skip_download": False},
-    {"name": "nov_dec",    "start": "2024-11-01", "end": "2024-12-31", "skip_download": False},
+    {"name": "janv_fev_2023",   "start": "2023-01-01", "end": "2023-02-28", "skip_download": False},
+    {"name": "mars_avril_2023", "start": "2023-03-01", "end": "2023-04-30", "skip_download": False},
+    {"name": "mai_juin_2023",   "start": "2023-05-01", "end": "2023-06-30", "skip_download": False},
 ]
 
 def run_step(folder: str, script: str, args: list = None):
@@ -54,20 +54,43 @@ if __name__ == "__main__":
         print(f"### DÉMARRAGE DU TRAITEMENT : {lot['name'].upper()} ({lot['start']} au {lot['end']}) ###")
         print(f"{'#'*80}")
 
-        # 1. Téléchargement pour le lot spécifique (sauf si déjà téléchargé)
-        if lot.get("skip_download"):
-            print("\n-> Téléchargement ignoré (données déjà présentes)")
+        # Vérifier si ce lot est déjà entièrement traité
+        if (DATA_INTERIM / f"stay_points_{lot['name']}.csv").exists():
+            print(f"\n-> Lot {lot['name']} déjà terminé (stay_points_{lot['name']}.csv existe), on passe.")
+            continue
+
+        # Déterminer à quelle étape reprendre
+        has_resampled = (DATA_INTERIM / "trajectories_resampled.csv").exists()
+        has_trajectories = (DATA_INTERIM / "trajectories.csv").exists()
+        has_cleaned = len(list(DATA_INTERIM.glob("*_clean.csv"))) > 0
+
+        if has_resampled:
+            print("\n-> trajectories_resampled.csv existe déjà, on saute directement aux points d'arrêt.")
+        elif has_trajectories:
+            print("\n-> trajectories.csv existe déjà, on reprend au ré-échantillonnage.")
+            run_step("src/ingestion", "resample_trajectories.py")
+        elif has_cleaned:
+            print("\n-> Fichiers *_clean.csv trouvés, on reprend à la construction des trajectoires.")
+            # 3. Construction et segmentation des trajectoires
+            run_step("src/ingestion", "build_trajectories.py")
+            # 4. Ré-échantillonnage
+            run_step("src/ingestion", "resample_trajectories.py")
         else:
-            run_step("src/ingestion", "download_noaa.py", ["--start", lot["start"], "--end", lot["end"]])
+            # Pipeline complet depuis le début
+            # 1. Téléchargement
+            if lot.get("skip_download"):
+                print("\n-> Téléchargement ignoré (données déjà présentes)")
+            else:
+                run_step("src/ingestion", "download_noaa.py", ["--start", lot["start"], "--end", lot["end"]])
 
-        # 2. Nettoyage
-        run_step("src/ingestion", "clean_ais.py")
+            # 2. Nettoyage
+            run_step("src/ingestion", "clean_ais.py")
 
-        # 3. Construction et segmentation des trajectoires
-        run_step("src/ingestion", "build_trajectories.py")
+            # 3. Construction et segmentation des trajectoires
+            run_step("src/ingestion", "build_trajectories.py")
 
-        # 4. Ré-échantillonnage
-        run_step("src/ingestion", "resample_trajectories.py")
+            # 4. Ré-échantillonnage
+            run_step("src/ingestion", "resample_trajectories.py")
 
         # 5. Points d'arrêt
         run_step("src/ports", "detect_stay_points.py")
@@ -84,5 +107,5 @@ if __name__ == "__main__":
 
     print(f"\n{'='*60}")
     print("Traitement par lots terminé avec succès.")
-    print("Fichiers générés : stay_points_lot1.csv, trajectories_lot1.csv, etc.")
     print(f"{'='*60}")
+
