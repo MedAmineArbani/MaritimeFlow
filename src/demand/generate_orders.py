@@ -76,8 +76,8 @@ def generate_orders(od_matrix: pd.DataFrame, n_orders: int = 30) -> pd.DataFrame
         # On étale les commandes sur un horizon d'un mois
         days_offset = np.random.randint(0, 30)
         early_time = base_date + pd.Timedelta(days=days_offset)
-        # Fenêtre de 10 jours pour livrer
-        late_time = early_time + pd.Timedelta(days=10)
+        # Fenêtre de 30 jours pour livrer (plus réaliste par rapport au temps de trajet)
+        late_time = early_time + pd.Timedelta(days=30)
         
         orders.append({
             "order_id": f"ORD_{i+1:03d}",
