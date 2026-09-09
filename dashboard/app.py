@@ -11,6 +11,7 @@ import plotly.express as px
 import plotly.graph_objects as go
 from pathlib import Path
 import pickle
+import joblib
 import folium
 from streamlit_folium import st_folium
 import simpy
@@ -171,10 +172,18 @@ def load_ml_models():
     eta_model = None
     encoder = None
     if eta_model_path.exists() and encoder_path.exists():
-        with open(eta_model_path, "rb") as f:
-            eta_model = pickle.load(f)
-        with open(encoder_path, "rb") as f:
-            encoder = pickle.load(f)
+        try:
+            eta_model = joblib.load(eta_model_path)
+            encoder = joblib.load(encoder_path)
+        except Exception:
+            try:
+                with open(eta_model_path, "rb") as f:
+                    eta_model = pickle.load(f)
+                with open(encoder_path, "rb") as f:
+                    encoder = pickle.load(f)
+            except Exception:
+                eta_model = None
+                encoder = None
     return eta_model, encoder
 
 
@@ -474,7 +483,8 @@ elif menu_selection == "Prédiction ETA (LightGBM)":
                     ]
                 )
 
-                predicted_hours = eta_model.predict(input_features)[0]
+                raw_pred = eta_model.predict(input_features)[0]
+                predicted_hours = float(np.expm1(raw_pred)) if raw_pred < 15 else float(raw_pred)
                 predicted_days = predicted_hours / 24.0
 
                 st.markdown(
