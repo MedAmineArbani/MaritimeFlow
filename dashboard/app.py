@@ -205,17 +205,10 @@ eta_model, encoder = load_ml_models()
 st.markdown(
     """
 <div class="header-box">
-    <div style="display: flex; justify-content: space-between; align-items: center;">
-        <div>
-            <div class="header-title">MARITIMEFLOW : DECISION SUPPORT SYSTEM</div>
-            <div style="color: #94a3b8; font-size: 1.05rem;">
-                Plateforme d'Optimisation des Routes Maritimes, Détection de Ports & Simulation Stochastique de Flotte
-            </div>
-        </div>
-        <div>
-            <span style="background: rgba(56, 189, 248, 0.15); color: #38bdf8; padding: 8px 16px; border-radius: 20px; font-weight: 600; font-size: 0.85rem; border: 1px solid rgba(56, 189, 248, 0.4);">
-                VERSION 2.4
-            </span>
+    <div>
+        <div class="header-title">MARITIMEFLOW : DECISION SUPPORT SYSTEM</div>
+        <div style="color: #94a3b8; font-size: 1.05rem;">
+            Plateforme d'Optimisation des Routes Maritimes, Détection de Ports & Simulation Stochastique de Flotte
         </div>
     </div>
 </div>
