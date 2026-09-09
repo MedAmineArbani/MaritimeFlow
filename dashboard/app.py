@@ -20,12 +20,11 @@ import time
 # --- CONFIGURATION PAGE ---
 st.set_page_config(
     page_title="MaritimeFlow | Decision Support System",
-    page_icon="⚓",
     layout="wide",
     initial_sidebar_state="expanded",
 )
 
-# --- INJECTION CSS PERSONNALISÉ (AESTHETICS PREMIUM) ---
+# --- INJECTION CSS PERSONNALISÉ ---
 st.markdown(
     """
 <style>
@@ -125,7 +124,7 @@ st.markdown(
     unsafe_allow_html=True,
 )
 
-# --- CHARGEMENT SÉCURISÉ DES DONNÉES (CACHE ST) ---
+# --- CHARGEMENT SÉCURISÉ DES DONNÉES ---
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 PROCESSED_DIR = PROJECT_ROOT / "data" / "processed"
 
@@ -197,14 +196,14 @@ st.markdown(
 <div class="header-box">
     <div style="display: flex; justify-content: space-between; align-items: center;">
         <div>
-            <div class="header-title">⚓ MARITIMEFLOW : DECISION SUPPORT SYSTEM</div>
+            <div class="header-title">MARITIMEFLOW : DECISION SUPPORT SYSTEM</div>
             <div style="color: #94a3b8; font-size: 1.05rem;">
                 Plateforme d'Optimisation des Routes Maritimes, Détection de Ports & Simulation Stochastique de Flotte
             </div>
         </div>
         <div>
             <span style="background: rgba(56, 189, 248, 0.15); color: #38bdf8; padding: 8px 16px; border-radius: 20px; font-weight: 600; font-size: 0.85rem; border: 1px solid rgba(56, 189, 248, 0.4);">
-                ● LIVE DEMO V2.4
+                VERSION 2.4
             </span>
         </div>
     </div>
@@ -214,24 +213,21 @@ st.markdown(
 )
 
 # --- SIDEBAR NAVIGATION ---
-st.sidebar.image(
-    "https://img.icons8.com/isometric/100/cargo-ship.png", width=80
-)
-st.sidebar.title("Navigation Global")
+st.sidebar.title("Navigation Globale")
 menu_selection = st.sidebar.radio(
     "Modules Métier",
     [
-        "📊 Vue Synthétique & KPIs",
-        "🗺️ Cartographie & DBSCAN",
-        "🔮 Prédiction ETA (LightGBM)",
-        "⚓ Congestion Portuaire (M/M/c)",
-        "⚖️ Optimisation Flotte (ALNS/MILP)",
-        "🎲 Simulation Robustesse (SimPy)",
+        "Vue Synthétique & KPIs",
+        "Cartographie & DBSCAN",
+        "Prédiction ETA (LightGBM)",
+        "Congestion Portuaire (M/M/c)",
+        "Optimisation Flotte (ALNS/MILP)",
+        "Simulation Robustesse (SimPy)",
     ],
 )
 
 st.sidebar.markdown("<div class='custom-hr'></div>", unsafe_allow_html=True)
-st.sidebar.subheader("⚙️ Filtres Globaux")
+st.sidebar.subheader("Filtres Globaux")
 selected_validated_only = st.sidebar.checkbox(
     "Ports Validés Uniquement", value=True
 )
@@ -253,8 +249,8 @@ Données : AIS USA (NOAA) 2024
 # =============================================================================
 # MODULE 1 : VUE SYNTHÉTIQUE & KPIS
 # =============================================================================
-if menu_selection == "📊 Vue Synthétique & KPIs":
-    st.subheader("📌 Vue d'Ensemble du Pipeline & Indicateurs Clés")
+if menu_selection == "Vue Synthétique & KPIs":
+    st.subheader("Vue d'Ensemble du Pipeline & Indicateurs Clés")
 
     col1, col2, col3, col4 = st.columns(4)
     with col1:
@@ -303,7 +299,7 @@ if menu_selection == "📊 Vue Synthétique & KPIs":
     col_left, col_right = st.columns([1.2, 1])
 
     with col_left:
-        st.markdown("### 🏗️ Architecture du Pipeline End-to-End")
+        st.markdown("### Architecture du Pipeline End-to-End")
         st.markdown(
             r"""
         L'architecture globale de MaritimeFlow résout la chaîne de valeur complète depuis le signal brut jusqu'au plan d'affectation :
@@ -312,13 +308,13 @@ if menu_selection == "📊 Vue Synthétique & KPIs":
         3. **Détection de Stay Points & Clustering** : Extraction des zones d'arrêt (vitesse = 0 pendant > 2h) et algorithme **DBSCAN** ($\epsilon=3$ km).
         4. **Construction Matrice Origine-Destination (O-D)** : Match des clusters avec le World Port Index (< 10 km).
         5. **Modélisation Prédictive ETA & Congestion** : LightGBM pour l'ETA et files d'attente M/M/c pour la saturation.
-        6. **Optimisation Métas-heuristique (ALNS)** : Affectation flotte-commandes avec fenêtres de temps et coûts de demurrage.
+        6. **Optimisation Métaheuristique (ALNS)** : Affectation flotte-commandes avec fenêtres de temps et coûts de demurrage.
         7. **Simulation de Robustesse (SimPy)** : Évaluation sous incertitude météo et temps d'attente.
         """
         )
 
     with col_right:
-        st.markdown("### 🚢 Répartition des Capacités de Flotte")
+        st.markdown("### Répartition des Capacités de Flotte")
         if fleet_df is not None:
             fig_fleet = px.pie(
                 fleet_df,
@@ -338,8 +334,8 @@ if menu_selection == "📊 Vue Synthétique & KPIs":
 # =============================================================================
 # MODULE 2 : CARTOGRAPHIE & DBSCAN
 # =============================================================================
-elif menu_selection == "🗺️ Cartographie & DBSCAN":
-    st.subheader("🗺️ Cartographie Interactive des Ports & Clusters DBSCAN")
+elif menu_selection == "Cartographie & DBSCAN":
+    st.subheader("Cartographie Interactive des Ports & Clusters DBSCAN")
     st.caption(
         "Visualisation géographique des hubs maritimes identifiés par analyse spatio-temporelle des stay points AIS."
     )
@@ -347,7 +343,6 @@ elif menu_selection == "🗺️ Cartographie & DBSCAN":
     col_map, col_details = st.columns([2.5, 1])
 
     with col_map:
-        # Centrage sur le Golfe du Mexique / Côte Est US
         m = folium.Map(
             location=[29.5, -90.0],
             zoom_start=6,
@@ -388,7 +383,7 @@ elif menu_selection == "🗺️ Cartographie & DBSCAN":
         st_folium(m, width="100%", height=520)
 
     with col_details:
-        st.markdown("### 📊 Top Ports par Volume d'Arrêts")
+        st.markdown("### Top Ports par Volume d'Arrêts")
         top_ports = filtered_ports.sort_values(
             by="n_stay_points", ascending=False
         ).head(10)
@@ -416,23 +411,22 @@ elif menu_selection == "🗺️ Cartographie & DBSCAN":
 # =============================================================================
 # MODULE 3 : PRÉDICTION ETA (LIGHTGBM)
 # =============================================================================
-elif menu_selection == "🔮 Prédiction ETA (LightGBM)":
-    st.subheader("🔮 Simulateur Prédictif du Temps de Trajet (ETA)")
+elif menu_selection == "Prédiction ETA (LightGBM)":
+    st.subheader("Simulateur Prédictif du Temps de Trajet (ETA)")
     st.caption(
         "Ce module utilise un modèle Gradient Boosting (LightGBM) entraîné sur les caractéristiques géométriques et saisonnières des routes."
     )
 
     if eta_model is None or encoder is None:
         st.warning(
-            "⚠️ Modèle ETA introuvable dans data/processed. Veuillez ré-exécuter le script de formation."
+            "Modèle ETA introuvable dans data/processed. Veuillez ré-exécuter le script de formation."
         )
     else:
         col_form, col_res = st.columns([1, 1.2])
 
         with col_form:
-            st.markdown("### 📝 Paramètres de la Traversée")
+            st.markdown("### Paramètres de la Traversée")
 
-            # Récupérer les routes valides depuis l'encodeur
             valid_routes = list(encoder.classes_)
             selected_route = st.selectbox(
                 "Sélectionnez la Route (Origine -> Destination)", valid_routes
@@ -457,17 +451,15 @@ elif menu_selection == "🔮 Prédiction ETA (LightGBM)":
             )
 
             btn_predict = st.button(
-                "🚀 Calculez l'ETA Prédictif", use_container_width=True
+                "Calculez l'ETA Prédictif", use_container_width=True
             )
 
         with col_res:
-            st.markdown("### ⏱️ Résultat du Modèle Prédictif")
+            st.markdown("### Résultat du Modèle Prédictif")
             if btn_predict:
                 route_enc = encoder.transform([selected_route])[0]
-                day_of_week = 2  # Mercredi par défaut
+                day_of_week = 2
 
-                # Préparation du vecteur de features
-                # Features : [distance_km, Length, Width, Draft, month, day_of_week, route_encoded]
                 input_features = pd.DataFrame(
                     [
                         {
@@ -496,7 +488,7 @@ elif menu_selection == "🔮 Prédiction ETA (LightGBM)":
                     unsafe_allow_html=True,
                 )
 
-                st.markdown("#### 🔍 Métriques Globales du Modèle")
+                st.markdown("#### Métriques Globales du Modèle")
                 mcol1, mcol2 = st.columns(2)
                 mcol1.metric(
                     label="Précision MAE (Erreur Moyenne)", value="18.4 heures"
@@ -506,8 +498,8 @@ elif menu_selection == "🔮 Prédiction ETA (LightGBM)":
 # =============================================================================
 # MODULE 4 : CONGESTION PORTUAIRE (M/M/c)
 # =============================================================================
-elif menu_selection == "⚓ Congestion Portuaire (M/M/c)":
-    st.subheader("⚓ Analyse Théorique vs Empirique de la Congestion Portuaire")
+elif menu_selection == "Congestion Portuaire (M/M/c)":
+    st.subheader("Analyse Théorique vs Empirique de la Congestion Portuaire")
     st.caption(
         "Comparaison des temps d'attente observés en mer avec le modèle stochastique de théorie des files d'attente (M/M/c)."
     )
@@ -548,7 +540,7 @@ elif menu_selection == "⚓ Congestion Portuaire (M/M/c)":
         )
         st.plotly_chart(fig_cong, use_container_width=True)
 
-        with st.expander("💡 Pourquoi observe-t-on un écart entre le modèle M/M/c et le Réel ?"):
+        with st.expander("Pourquoi observe-t-on un écart entre le modèle M/M/c et le Réel ?"):
             st.markdown(
                 """
             - **Hypothèse de Poisson** : Le modèle M/M/c suppose des arrivées aléatoires indépendantes. En pratique, les navires suivent des schedules ou arrivent par vagues.
@@ -562,17 +554,17 @@ elif menu_selection == "⚓ Congestion Portuaire (M/M/c)":
 # =============================================================================
 # MODULE 5 : OPTIMISATION DE LA FLOTTE (ALNS / MILP)
 # =============================================================================
-elif menu_selection == "⚖️ Optimisation Flotte (ALNS/MILP)":
-    st.subheader("⚖️ Planification & Optimisation de la Flotte")
+elif menu_selection == "Optimisation Flotte (ALNS/MILP)":
+    st.subheader("Planification & Optimisation de la Flotte")
     st.caption(
         "Résolution du problème d'affectation navire-commande avec fenêtres de temps (VRPTW)."
     )
 
-    tab_alns, tab_milp = st.tabs(["🚀 Métaheuristique ALNS", "🧮 Modèle Exact MILP"])
+    tab_alns, tab_milp = st.tabs(["Métaheuristique ALNS", "Modèle Exact MILP"])
 
     with tab_alns:
         if alns_df is not None:
-            st.markdown("### 📋 Plan d'Affectation Optimisé (ALNS)")
+            st.markdown("### Plan d'Affectation Optimisé (ALNS)")
             st.dataframe(alns_df, use_container_width=True)
 
             fig_cost = px.bar(
@@ -594,7 +586,7 @@ elif menu_selection == "⚖️ Optimisation Flotte (ALNS/MILP)":
 
     with tab_milp:
         if milp_df is not None:
-            st.markdown("### 🎯 Solution Exacte MILP (Solveur Linéaire)")
+            st.markdown("### Solution Exacte MILP (Solveur Linéaire)")
             st.dataframe(milp_df, use_container_width=True)
         else:
             st.warning("Fichier milp_solution.csv non trouvé.")
@@ -602,8 +594,8 @@ elif menu_selection == "⚖️ Optimisation Flotte (ALNS/MILP)":
 # =============================================================================
 # MODULE 6 : SIMULATION ÉVÉNEMENTIELLE (SIMPY)
 # =============================================================================
-elif menu_selection == "🎲 Simulation Robustesse (SimPy)":
-    st.subheader("🎲 Simulation Événementielle Stochastique (SimPy)")
+elif menu_selection == "Simulation Robustesse (SimPy)":
+    st.subheader("Simulation Événementielle Stochastique (SimPy)")
     st.caption(
         "Évaluation dynamique du plan sous aléas météorologiques et temps de service aléatoires aux ports."
     )
@@ -611,18 +603,17 @@ elif menu_selection == "🎲 Simulation Robustesse (SimPy)":
     col_sim_controls, col_sim_view = st.columns([1, 2])
 
     with col_sim_controls:
-        st.markdown("### 🎛️ Configuration de la Simu")
+        st.markdown("### Configuration de la Simulation")
         n_days = st.slider("Horizon de Simulation (Jours)", 30, 200, 100)
         seed = st.number_input("Graine Aléatoire (Seed)", value=42)
 
-        btn_run_sim = st.button("▶️ Lancer le Benchmark SimPy", use_container_width=True)
+        btn_run_sim = st.button("Lancer le Benchmark SimPy", use_container_width=True)
 
     with col_sim_view:
         if btn_run_sim:
             with st.spinner("Exécution de la simulation stochastique en cours..."):
-                time.sleep(1)  # effet visuel
+                time.sleep(1)
 
-                # Importer et lancer fleet_simulation dynamique
                 try:
                     from src.simulation.fleet_simulation import run_simulation
 
@@ -631,10 +622,10 @@ elif menu_selection == "🎲 Simulation Robustesse (SimPy)":
 
                     bench_df = pd.DataFrame([res_opt, res_naive])
 
-                    st.markdown("### 📊 Résultats du Benchmark de Robustesse")
+                    st.markdown("### Résultats du Benchmark de Robustesse")
                     st.table(bench_df)
 
-                    st.success("✅ Simulation terminée avec succès !")
+                    st.success("Simulation terminée avec succès !")
 
                 except Exception as e:
                     st.error(f"Erreur lors de l'exécution SimPy : {e}")
