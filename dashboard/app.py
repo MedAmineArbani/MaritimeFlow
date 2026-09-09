@@ -338,7 +338,7 @@ if menu_selection == "Vue Synthétique & KPIs":
                 plot_bgcolor="rgba(0,0,0,0)",
                 font_color="#f8fafc",
             )
-            st.plotly_chart(fig_fleet, use_container_width=True)
+            st.plotly_chart(fig_fleet, width="stretch")
 
 # =============================================================================
 # MODULE 2 : CARTOGRAPHIE & DBSCAN
@@ -415,7 +415,7 @@ elif menu_selection == "Cartographie & DBSCAN":
             font_color="#f8fafc",
             yaxis=dict(autorange="reversed"),
         )
-        st.plotly_chart(fig_top, use_container_width=True)
+        st.plotly_chart(fig_top, width="stretch")
 
 # =============================================================================
 # MODULE 3 : PRÉDICTION ETA (LIGHTGBM)
@@ -460,7 +460,7 @@ elif menu_selection == "Prédiction ETA (LightGBM)":
             )
 
             btn_predict = st.button(
-                "Calculez l'ETA Prédictif", use_container_width=True
+                "Calculez l'ETA Prédictif", width="stretch"
             )
 
         with col_res:
@@ -552,7 +552,7 @@ elif menu_selection == "Congestion Portuaire (M/M/c)":
             font_color="#f8fafc",
             xaxis_tickangle=-45,
         )
-        st.plotly_chart(fig_cong, use_container_width=True)
+        st.plotly_chart(fig_cong, width="stretch")
 
         with st.expander("Pourquoi observe-t-on un écart entre le modèle M/M/c et le Réel ?"):
             st.markdown(
@@ -579,7 +579,7 @@ elif menu_selection == "Optimisation Flotte (ALNS/MILP)":
     with tab_alns:
         if alns_df is not None:
             st.markdown("### Plan d'Affectation Optimisé (ALNS)")
-            st.dataframe(alns_df, use_container_width=True)
+            st.dataframe(alns_df, width="stretch")
 
             fig_cost = px.bar(
                 alns_df,
@@ -594,14 +594,14 @@ elif menu_selection == "Optimisation Flotte (ALNS/MILP)":
                 plot_bgcolor="rgba(0,0,0,0)",
                 font_color="#f8fafc",
             )
-            st.plotly_chart(fig_cost, use_container_width=True)
+            st.plotly_chart(fig_cost, width="stretch")
         else:
             st.warning("Fichier alns_solution.csv non trouvé.")
 
     with tab_milp:
         if milp_df is not None:
             st.markdown("### Solution Exacte MILP (Solveur Linéaire)")
-            st.dataframe(milp_df, use_container_width=True)
+            st.dataframe(milp_df, width="stretch")
         else:
             st.warning("Fichier milp_solution.csv non trouvé.")
 
@@ -621,7 +621,7 @@ elif menu_selection == "Simulation Robustesse (SimPy)":
         n_days = st.slider("Horizon de Simulation (Jours)", 30, 200, 100)
         seed = st.number_input("Graine Aléatoire (Seed)", value=42)
 
-        btn_run_sim = st.button("Lancer le Benchmark SimPy", use_container_width=True)
+        btn_run_sim = st.button("Lancer le Benchmark SimPy", width="stretch")
 
     with col_sim_view:
         if btn_run_sim:
