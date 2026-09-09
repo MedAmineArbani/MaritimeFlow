@@ -518,23 +518,27 @@ elif menu_selection == "Congestion Portuaire (M/M/c)":
         merged_cong = pd.merge(
             cong_emp,
             cong_theo,
-            on="matched_port_name",
-            suffixes=("_emp", "_theo"),
+            on="port",
+        )
+
+        plot_df = merged_cong.copy().head(15)
+        plot_df["mmc_wait_plot"] = plot_df["mmc_wait_current_hours"].replace(
+            [np.inf, -np.inf], np.nan
         )
 
         fig_cong = go.Figure()
         fig_cong.add_trace(
             go.Bar(
-                x=merged_cong["matched_port_name"],
-                y=merged_cong["avg_wait_hours_emp"],
+                x=plot_df["port"],
+                y=plot_df["wait_time_mean_hours"],
                 name="Temps d'Attente Réel (AIS Empirique)",
                 marker_color="#38bdf8",
             )
         )
         fig_cong.add_trace(
             go.Bar(
-                x=merged_cong["matched_port_name"],
-                y=merged_cong["W_q_hours"],
+                x=plot_df["port"],
+                y=plot_df["mmc_wait_plot"],
                 name="Temps d'Attente Théorique (File M/M/c)",
                 marker_color="#f43f5e",
             )
@@ -645,7 +649,7 @@ st.markdown("<div class='custom-hr'></div>", unsafe_allow_html=True)
 st.markdown(
     """
 <div style="text-align: center; color: #64748b; font-size: 0.85rem;">
-    MaritimeFlow DSS © 2024 | Conçu avec Streamlit, Folium, Plotly, LightGBM & SimPy
+    MaritimeFlow DSS © 2026 | Conçu avec Streamlit, Folium, Plotly, LightGBM & SimPy
 </div>
 """,
     unsafe_allow_html=True,
