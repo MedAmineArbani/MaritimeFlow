@@ -413,7 +413,7 @@ elif menu_selection == "Cartographie & DBSCAN":
             paper_bgcolor="rgba(0,0,0,0)",
             plot_bgcolor="rgba(0,0,0,0)",
             font_color="#f8fafc",
-            yaxis=dict(autorange="reverse"),
+            yaxis=dict(autorange="reversed"),
         )
         st.plotly_chart(fig_top, use_container_width=True)
 
